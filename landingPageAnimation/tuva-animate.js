@@ -3,14 +3,17 @@ var animationIndex = 0; //used to keep track of the current animation step
 
 //background image variables
 var elem = document.getElementById("animation");
+var maxWidth = 808;
+var maxHeight = 520;
 var parentX = elem.offsetLeft;
 var parentY = elem.offsetTop;
-var parentWidth = elem.offsetWidth;
-var parentHeight = elem.offsetHeight;
+var parentWidth = maxWidth;//elem.offsetWidth;
+var parentHeight = maxHeight;//elem.offsetHeight;
+var heightToWidthRatio = maxHeight/maxWidth;
 
 //plot area variables
-var xAxisStart = 0.4*parentWidth; //bottom left corner of the plotting area
-var yAxisStart = 0.8*parentHeight; //bottom left corner of plotting area
+var xAxisStart = 325; //bottom left corner of the plotting area
+var yAxisStart = 365; //bottom left corner of plotting area
 var xAxisWidth = Math.round(parentWidth*0.5); //plot width as percentage of background image
 var yAxisHeight = Math.round(parentHeight*0.5);//plot height as percentage of background image
 var xAxisEnd = xAxisStart + xAxisWidth; //lower right corner of plotting area
@@ -39,40 +42,108 @@ function loadAnimation() {
 
   //creates the case images in a mixed up state
   for(var i = 0 ; i < datasetJSON.length ; i++){
-    myCases.push(new image(elem, i,
-      getRandomInt(xAxisWidth)+xAxisStart,
-      getRandomInt(yAxisHeight)+yAxisStart-yAxisHeight,
-      10,10,"assets/case-circle.png"));
+    myCases.push(new image(
+      elem, //parent div
+      i, //id
+      getRandomInt(xAxisWidth)+xAxisStart, //x
+      getRandomInt(yAxisHeight)+yAxisStart-yAxisHeight, //y
+      10, //width
+      10, //height
+      "assets/case-circle.png"));  //image source
   }
   
-  myHeightAttribute = new image(elem,"height-attribute",parentWidth*.006,parentHeight*.445,parentWidth*.12,parentHeight*.11,"assets/height-attribute.png");
+  //image constructor(elem, id, x , y, width , height, source)
+  myHeightAttribute = new image(
+    elem, //parent div
+    "height-attribute", //id
+    parentWidth*.0055, //x
+    parentHeight*.388, //y
+    parentWidth*.12, //width
+    parentHeight*.11, //height
+    "assets/height-attribute.png"); //image source
   myHeightAttribute.makeHidden();
-  myLengthAttribute = new image(elem,"length-attribute",parentWidth*.006,parentHeight*.34,parentWidth*.12,parentHeight*.11,"assets/length-attribute.png");
+  myLengthAttribute = new image(
+    elem,
+    "length-attribute",
+    parentWidth*.0055,
+    parentHeight*.276,
+    parentWidth*.12,
+    parentHeight*.11,
+    "assets/length-attribute.png"); //image source
   myLengthAttribute.makeHidden();
-  
-  myXAxis = new image(elem,"x-axis",parentWidth*.39,parentHeight*.82,parentWidth*.53,parentHeight*.02,"assets/x-axis.png");
-  myXAxis.makeHidden();
-  myYAxis = new image(elem,"y-axis",parentWidth*.38,parentHeight*.26,parentWidth*.015,parentHeight*.56,"assets/y-axis.png");
-  myYAxis.makeHidden();
 
-  myActiveHeightAttribute = new image(elem,"active-height-attribute",parentWidth*.006,parentHeight*.445,parentWidth*.12,parentHeight*.11,"assets/active-height-attribute.png");
+  myActiveHeightAttribute = new image(
+    elem, //parent div
+    "active-height-attribute", //id
+    parentWidth*.0055, //x
+    parentHeight*.388, //y
+    parentWidth*.12, //width
+    parentHeight*.11, //height
+    "assets/active-height-attribute.png"); //image source
   myActiveHeightAttribute.makeHidden();
-  myActiveLengthAttribute = new image(elem,"active-length-attribute",parentWidth*.006,parentHeight*.34,parentWidth*.12,parentHeight*.11,"assets/active-length-attribute.png");
+  myActiveLengthAttribute = new image(
+    elem,
+    "active-length-attribute",
+    parentWidth*.0055,
+    parentHeight*.276,
+    parentWidth*.12,
+    parentHeight*.11,
+    "assets/active-length-attribute.png");
   myActiveLengthAttribute.makeHidden();
 
-  myXAxisWithLengthAttribute = new image(elem,"x-axis-with-attribute",parentWidth*.373,parentHeight*.844,parentWidth*.57,parentHeight*.055,"assets/xaxis-length.png");
+  myXAxis = new image(
+    elem, //parent div
+    "x-axis", //id
+    xAxisStart*.98, //x
+    yAxisStart*1.05, //y
+    parentWidth*.53, //width
+    parentHeight*.02, //height
+    "assets/x-axis.png"); //image source
+  myXAxis.makeHidden();
+  myYAxis = new image(
+    elem, //parent div
+    "y-axis", //id
+    xAxisStart*.935, //x
+    yAxisEnd*.92, //y
+    parentWidth*.015, //width
+    parentHeight*.54, //height
+    "assets/y-axis.png"); //image source
+  myYAxis.makeHidden();
+
+  myXAxisWithLengthAttribute = new image(
+    elem, //parent div
+    "x-axis-with-attribute", //id
+    298, //x
+    398, //y
+    764-298, //width
+    429-398, //height
+    "assets/xaxis-length.png"); //image source
   myXAxisWithLengthAttribute.makeHidden();
-  myYAxisWithHeightAttribute = new image(elem,"y-axis-with-attribute",parentWidth*.336,parentHeight*.229,parentWidth*.039,parentHeight*.62,"assets/yaxis-height.png");
+  myYAxisWithHeightAttribute = new image(
+    elem, //parent div
+    "y-axis-with-attribute", //id
+    268, //x
+    88, //y
+    299-268, //width
+    399-88, //height
+    "assets/yaxis-height.png"); //image source
   myYAxisWithHeightAttribute.makeHidden();
 
-  myCursor = new image(elem,"cursor",parentWidth*0.5,parentHeight*0.5,20,20,"assets/cursor.png");
+  myCursor = new image(
+    elem, //parent div
+    "cursor", //id
+    parentWidth*0.5, //x
+    parentHeight*0.5, //y
+    20, //width
+    20, //height
+    "assets/cursor.png"); //image source
 
   //once images are loaded, start the animation
   animationLoop(animationIndex);
 }
 
 function animationLoop(animationIndex) {
-  console.log("animation index "+animationIndex);
+  // console.log("animation index "+animationIndex);
 
   var currentFrame = 0;
   var totalFrames = 300;
@@ -104,7 +175,11 @@ function animationLoop(animationIndex) {
       if(animationIndex == 0){
         //move cursor to length attribute
         if(currentFrame==0) {
-          myCursor.setStartEnd(parentWidth*0.5,parentHeight*0.5,myLengthAttribute.x + myLengthAttribute.w/2,myLengthAttribute.y + myLengthAttribute.h/2);
+          myCursor.setStartEnd(
+            parentWidth*0.5,
+            parentHeight*0.5,
+            myLengthAttribute.x + myLengthAttribute.w/2,
+            myLengthAttribute.y + myLengthAttribute.h/2);
         }
         myCursor.moveMe(totalFrames);
 
@@ -112,8 +187,16 @@ function animationLoop(animationIndex) {
       else if (animationIndex == 1){
         //drag length attribute to x-axis
         if(currentFrame==0) {
-          myCursor.setStartEnd(myLengthAttribute.x + myLengthAttribute.w/2,myLengthAttribute.y + myLengthAttribute.h/2,myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2);
-          myLengthAttribute.setStartEnd(myLengthAttribute.x + myLengthAttribute.w/2,myLengthAttribute.y + myLengthAttribute.h/2,myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2);
+          myCursor.setStartEnd(
+            myLengthAttribute.x + myLengthAttribute.w/2,
+            myLengthAttribute.y + myLengthAttribute.h/2,
+            myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,
+            myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2);
+          myLengthAttribute.setStartEnd(
+            myLengthAttribute.x + myLengthAttribute.w/2,
+            myLengthAttribute.y + myLengthAttribute.h/2,
+            myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,
+            myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2);
         }
         if(myLengthAttribute.isVisible==false) myLengthAttribute.makeVisible();
         myCursor.moveMe(totalFrames);
@@ -134,7 +217,11 @@ function animationLoop(animationIndex) {
       else if (animationIndex == 3){
         //move cursor to height attribute
         if(currentFrame==0) {
-          myCursor.setStartEnd(myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2,parentWidth*.006+ myHeightAttribute.w/2,parentHeight*.445+ myHeightAttribute.h/2);
+          myCursor.setStartEnd(
+            myXAxisWithLengthAttribute.x+myXAxisWithLengthAttribute.w/2,
+            myXAxisWithLengthAttribute.y+myXAxisWithLengthAttribute.h/2,
+            myHeightAttribute.x+ myHeightAttribute.w/2,
+            myHeightAttribute.y+ myHeightAttribute.h/2);
         }
 
         myCursor.moveMe(totalFrames);
@@ -142,8 +229,16 @@ function animationLoop(animationIndex) {
       else if (animationIndex == 4){
         //drag height attribute to y-axis
         if(currentFrame==0) {
-          myCursor.setStartEnd(parentWidth*.006+ myHeightAttribute.w/2,parentHeight*.445 + myHeightAttribute.h/2,myYAxisWithHeightAttribute.x+myYAxisWithHeightAttribute.w/2,myYAxisWithHeightAttribute.y+myYAxisWithHeightAttribute.h/2);
-          myHeightAttribute.setStartEnd(myHeightAttribute.x + myHeightAttribute.w/2,myHeightAttribute.y + myHeightAttribute.h/2,parentWidth*.35,parentHeight*.55);
+          myCursor.setStartEnd(
+            myHeightAttribute.x+ myHeightAttribute.w/2,
+            myHeightAttribute.y + myHeightAttribute.h/2,
+            myYAxisWithHeightAttribute.x+myYAxisWithHeightAttribute.w/2,
+            myYAxisWithHeightAttribute.y+myYAxisWithHeightAttribute.h/2);
+          myHeightAttribute.setStartEnd(
+            myHeightAttribute.x + myHeightAttribute.w/2,
+            myHeightAttribute.y + myHeightAttribute.h/2,
+            myYAxisWithHeightAttribute.x+myYAxisWithHeightAttribute.w/2,
+            myYAxisWithHeightAttribute.y+myYAxisWithHeightAttribute.h/2);
         }
         if(myHeightAttribute.isVisible==false) myHeightAttribute.makeVisible();
 
@@ -177,7 +272,20 @@ function animationLoop(animationIndex) {
         moveCases(totalFrames);
         myCursor.moveMe(totalFrames);
       }
-      currentFrame++; 
+      currentFrame++;
+
+      //To Do: Work on Responsiveness for the image
+      //check if we need to resize the images
+      // if(document.readyState === "complete"){
+        // console.log(elem.parentElement.style.offsetWidth);
+        // if(elem.offsetWidth!=parentWidth){
+          // console.log("Width: " + elem.offsetWidth + " Height: "+elem.offsetHeight);
+          // elem.offsetHeight=elem.offsetWidth*heightToWidthRatio+"px";
+          // parentWidth=elem.offsetWidth;
+          // parentHeight=elem.offsetHeight;
+          // updateSizes();
+        // }
+      // }
     }
   }
 }
@@ -270,10 +378,50 @@ function translate(value, leftMin, leftMax, rightMin, rightMax){
     return rightMin + (valueScaled * rightSpan)
 }
 
+//To Do: this function will handle the resizing of all images and positions to make the animation responsive
+// function updateSizes(){
+//   console.log("size changed");
+  
+//   var scale = elem.offsetWidth/maxWidth;
+//   console.log(scale);
+
+//   //update background image dimensions and store them
+//   parentX = elem.offsetLeft;
+//   parentY = elem.offsetTop;
+//   parentWidth = elem.offsetWidth;
+//   parentHeight = elem.offsetHeight;
+//   //update plot area variables
+//   xAxisStart = 325*scale; //bottom left corner of the plotting area
+//   yAxisStart = 365*scale; //bottom left corner of plotting area
+//   xAxisWidth = Math.round(parentWidth*0.5)*scale; //plot width as percentage of background image
+//   yAxisHeight = Math.round(parentHeight*0.5)*scale;//plot height as percentage of background image
+//   xAxisEnd = xAxisStart + xAxisWidth; //lower right corner of plotting area
+//   yAxisEnd = yAxisStart - yAxisHeight; //upper left corner of plotting area
+
+//   //go through each image and update their dimensions
+//   for(var i = 0 ; i < datasetJSON.length ; i++){
+//     myCases[i].scaleImageDimensionsAndPosition(scale);
+//     // if(i==0){
+//     //   console.log("X: "+myCases[i].x+" Y: "+myCases[i].y+" W: "+myCases[i].w+" H: "+myCases[i].h)
+//     // }
+//   }
+//   myCursor.scaleImageDimensionsAndPosition(scale);
+//   myHeightAttribute.scaleImageDimensionsAndPosition(scale);
+//   myLengthAttribute.scaleImageDimensionsAndPosition(scale);
+//   myYAxis.scaleImageDimensionsAndPosition(scale);
+//   myXAxis.scaleImageDimensionsAndPosition(scale);
+//   myActiveHeightAttribute.scaleImageDimensionsAndPosition(scale);
+//   myActiveLengthAttribute.scaleImageDimensionsAndPosition(scale);
+//   myYAxisWithHeightAttribute.scaleImageDimensionsAndPosition(scale);
+//   myXAxisWithLengthAttribute.scaleImageDimensionsAndPosition(scale);
+// }
+
 class image {
   constructor(elem,id,_x,_y,_w,_h,source){
     this.w = _w;
     this.h = _h;
+    this.initW = _w; //to keep track of initial width
+    this.initH = _h; //to keep track of initial height
     this.myImage = new Image(this.w,this.h);
     this.myImage.src = source;
     this.myImage.style.position = "absolute";
@@ -341,9 +489,23 @@ class image {
     this.setY(this.y0);
     this.setStartEnd(this.x0,this.y0,this.x0,this.y0);
   }
+
+  //following code is buggy. currently doesn't scale properly
+  // scaleImageDimensionsAndPosition(scale){
+  //   document.getElementById(this.myImage.id).style.width=this.initW*scale;
+  //   document.getElementById(this.myImage.id).style.height=this.initH*scale;
+  //   this.setX(this.x0*scale);
+  //   this.setY(this.y0*scale);
+  //   this.setStartEnd(
+  //     this.xStart*scale,
+  //     this.yStart*scale,
+  //     this.xEnd*scale,
+  //     this.yEnd*scale);
+  //   this.updateImgXY();
+  // }
 }
 
-//for debugging locations in the image:
+// for debugging locations in the image:
 // function printMousePos(event) {
 //   console.log(
 //     "clientX: " + event.clientX +
